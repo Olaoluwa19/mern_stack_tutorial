@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(`${process.env.MONGO_URI}/techNotes`);
+    await mongoose.connect(`${process.env.MONGO_URI}/CompanyDB`);
   } catch (err) {
     console.error(err);
   }
