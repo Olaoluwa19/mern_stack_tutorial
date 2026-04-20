@@ -3,7 +3,7 @@ import cors from "cors";
 import api from "./routes/api.js";
 import cookieParser from "cookie-parser";
 import credentials from "./middleware/credentials.js";
-import corsOptions from "./config/corsOption.js";
+import corsOptions from "./config/corsOptions.js";
 import errorHandler from "./middleware/errorHandler.js";
 import { logger } from "./middleware/logEvents.js";
 import path from "path";
