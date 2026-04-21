@@ -5,6 +5,7 @@ const connectDB = async () => {
     await mongoose.connect(`${process.env.MONGO_URI}/CompanyDB`);
   } catch (err) {
     console.error(err);
+    throw err;
   }
 };
 
