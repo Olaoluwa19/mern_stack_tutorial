@@ -4,7 +4,7 @@ const userRoutes = express.Router();
 import {
   getAllUsers,
   getUser,
-  createUser,
+  createNewUser,
   updateUser,
   deleteUser,
 } from "../../controllers/usersController.js";
@@ -12,7 +12,7 @@ import {
 userRoutes
   .route("/")
   .get(getAllUsers)
-  .post(createUser)
+  .post(createNewUser)
   .patch(updateUser)
   .delete(deleteUser);
 
