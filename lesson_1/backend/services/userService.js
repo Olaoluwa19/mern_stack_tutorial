@@ -1,9 +1,17 @@
 import User from "../models/User.js";
-import Note from "../model/Note.js";
+import Note from "../models/Note.js";
 import validator from "validator";
 
 class UserService {
   constructor() {}
+
+  static async findAllUsers() {
+    return await User.find().select("-password").lean();
+  }
+
+  static async findUserById(userId) {
+    return await User.findOne({ _id: userId }).select("-password").exec();
+  }
 
   static async createUserField(
     request,
@@ -31,10 +39,6 @@ class UserService {
     });
 
     return user;
-  }
-
-  static async findUserById(userId) {
-    return await User.findOne({ _id: userId }).exec();
   }
 
   static async checkDuplicateUser(email, roles) {
