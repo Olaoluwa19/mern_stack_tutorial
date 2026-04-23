@@ -1,21 +1,38 @@
-const getAllUsers = (req, res) => {
+import asyncHandler from "express-async-handler";
+
+// @desc  Get all users
+// @route GET /api/users
+// @access Private/Admin
+const getAllUsers = asyncHandler((req, res) => {
   res.send("Get all users");
-};
+});
 
-const getUser = (req, res) => {
+// @desc  Get a user
+// @route GET /users:id
+// @access Private/Admin
+const getUser = asyncHandler((req, res) => {
   res.send("Get user");
-};
+});
 
-const createUser = (req, res) => {
+// @desc  Create new user
+// @route POST /users
+// @access Private/Admin
+const createNewUser = asyncHandler((req, res) => {
   res.send("Create user");
-};
+});
 
-const updateUser = (req, res) => {
+// @desc  Update a user
+// @route PATCH /users
+// @access Private/Admin
+const updateUser = asyncHandler((req, res) => {
   res.send("Update user");
-};
+});
 
-const deleteUser = (req, res) => {
+// @desc  Delete user
+// @route DELETE /users
+// @access Private/Admin
+const deleteUser = asyncHandler((req, res) => {
   res.send("Delete user");
-};
+});
 
-export { getAllUsers, getUser, createUser, updateUser, deleteUser };
+export { getAllUsers, getUser, createNewUser, updateUser, deleteUser };
