@@ -1,5 +1,5 @@
 export const ROLES_LIST = {
-  Employee: 5684,
-  Manager: 1973,
-  Admin: 3956,
+  Employee: 6743,
+  Manager: 9087,
+  Admin: 1473,
 };
