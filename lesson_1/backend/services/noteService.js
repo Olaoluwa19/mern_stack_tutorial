@@ -12,15 +12,16 @@ class NoteService {
     return await Note.findById(id).exec();
   }
 
-  static async findUserNotes(userId) {
-    return await Note.find({ user: userId }).lean().exec();
+  static async findUserNote(userId) {
+    return await Note.findOne({ user: userId }).lean().exec();
   }
 
-  static async createNote(noteObject) {
-    return await Note.create(noteObject);
+  static async createNote(noteObj) {
+    return await Note.create(noteObj);
   }
 
-  static async updateNote(note) {
+  static async updateNote(note, req) {
+    const { title, text, completed } = req.body;
     note.title = title;
     note.text = text;
     note.completed = completed;
