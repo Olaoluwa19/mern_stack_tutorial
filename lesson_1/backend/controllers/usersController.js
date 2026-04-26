@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 import UserService from "../services/userService.js";
 import {
@@ -8,7 +9,7 @@ import {
   notFound,
   conflict,
 } from "../utility/response.js";
-import { hashPassword } from "../utility/password.js";
+import { hashPassword, validatePassword } from "../utility/password.js";
 import NoteService from "../services/noteService.js";
 
 // @desc  Get all users
@@ -25,6 +26,9 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @access Private/Admin
 const getUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
+
+  if (!mongoose.isValidObjectId(id)) return badRequest(res, "Invalid user ID");
+
   const user = await UserService.findUserById(id);
   if (!user) return noContent(res);
   return ok(res, user);
@@ -58,7 +62,7 @@ const createNewUser = asyncHandler(async (req, res) => {
   }
 
   // Hash password
-  const hashedPwd = await hashPassword(hashPassword);
+  const hashedPwd = await hashPassword(password);
   const userObject = { username, password: hashedPwd, roles };
 
   // Create and store new user
@@ -91,6 +95,8 @@ const updateUser = asyncHandler(async (req, res) => {
     );
   }
 
+  if (!mongoose.isValidObjectId(id)) return badRequest(res, "Invalid user ID");
+
   const user = await UserService.findUserById(id);
   if (!user) return notFound(res, "User not found");
 
@@ -102,9 +108,9 @@ const updateUser = asyncHandler(async (req, res) => {
   }
   const hashPwd = password ? await hashPassword(password) : null;
 
-  const updatedUser = await UserService.updateUser(user, hashPwd);
+  const updatedUser = await UserService.updateUser(user, req, hashPwd);
 
-  return ok(res, updateUser, `User ${updatedUser.username} updated`);
+  return ok(res, updatedUser, `User ${updatedUser.username} updated`);
 });
 
 // @desc  Delete user
@@ -115,8 +121,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   if (!id) return badRequest(res, "User ID required");
 
-  const notes = await NoteService.findUserNotes(id);
-  if (notes?.length) {
+  if (!mongoose.isValidObjectId(id)) return badRequest(res, "Invalid user ID");
+
+  const note = await NoteService.findUserNote(id);
+  if (note) {
     return badRequest(res, "User has assigned notes");
   }
 
