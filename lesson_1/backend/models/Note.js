@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import sequence from "mongoose-sequence";
-const AutoIncrement = sequence(mongoose);
 
 const noteSchema = new mongoose.Schema(
   {
@@ -8,6 +6,11 @@ const noteSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+    },
+    ticket: {
+      type: Number,
+      unique: true, // prevent duplicates
+      required: true,
     },
     title: {
       type: String,
@@ -24,12 +27,6 @@ const noteSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-
-noteSchema.plugin(AutoIncrement, {
-  inc_field: "ticket",
-  id: "ticketNums",
-  starts_seq: 500,
-});
 
 const Note = mongoose.model("Note", noteSchema);
 
