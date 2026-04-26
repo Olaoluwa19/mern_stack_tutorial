@@ -1,4 +1,5 @@
 import Note from "../models/Note.js";
+import Counter from "../models/Counter.js";
 import validator from "validator";
 
 class NoteService {
@@ -17,7 +18,35 @@ class NoteService {
   }
 
   static async createNote(noteObj) {
-    return await Note.create(noteObj);
+    // Get next ticket number starting from 500
+    const counter = await Counter.findOneAndUpdate(
+      { _id: "ticketNums" },
+      { $inc: { seq: 1 } },
+      {
+        upsert: true,
+        returnDocument: "after", // ← This fixes the deprecation warning
+      },
+    );
+
+    // Ensure it starts at 500 (this logic guarantees the first ticket is 500)
+    let ticketNumber = counter.seq;
+
+    if (ticketNumber < 500) {
+      // This handles the case if counter was created with a low value
+      await Counter.findOneAndUpdate(
+        { _id: "ticketNums" },
+        { seq: 499 },
+        { upsert: true },
+      );
+      ticketNumber = 500;
+    }
+
+    const noteWithTicket = {
+      ...noteObj,
+      ticket: ticketNumber,
+    };
+
+    return await Note.create(noteWithTicket);
   }
 
   static async updateNote(note, req) {
@@ -29,12 +58,19 @@ class NoteService {
     return await note.save();
   }
 
-  static async checkDuplicateNote(title) {
-    return await Note.findOne({ title }).lean().exec();
+  static async checkDuplicateNoteForUser(userId, title) {
+    if (!userId || !title) return null;
+
+    return await Note.findOne({
+      user: userId,
+      title: { $regex: new RegExp(`^${title}$`, "i") },
+    })
+      .lean()
+      .exec();
   }
 
   static async deleteNote(id) {
-    return await Note.deleteOne(id);
+    return await Note.deleteOne({ _id: id });
   }
 }
 
