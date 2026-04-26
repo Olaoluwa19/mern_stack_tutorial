@@ -14,14 +14,15 @@ class UserService {
   }
 
   static async findUserById(id) {
-    return await User.findById(id).exec();
+    return await User.findById(id).select("-password").exec();
   }
 
-  static async createUser(userObject) {
-    return await User.create(userObject);
+  static async createUser(userObj) {
+    return await User.create(userObj);
   }
 
-  static async updateUser(user, hashPwd) {
+  static async updateUser(user, req, hashPwd) {
+    const { username, roles, active, password } = req.body;
     user.username = username;
     user.roles = roles;
     user.active = active;
@@ -42,13 +43,13 @@ class UserService {
   }
 
   static async deleteUser(id) {
-    return await User.deleteOne(id);
+    return await User.deleteOne({ _id: id });
   }
 
   static async populateUser(id) {
     return await User.findById(id)
       .populate({
-        path: "doctorsField",
+        path: "notes",
         select: "-password -refreshToken -createdAt -updatedAt",
       })
       .exec();
