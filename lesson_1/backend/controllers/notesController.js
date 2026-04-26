@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 import NoteService from "../services/noteService.js";
+import UserService from "../services/userService.js";
 import {
   ok,
   noContent,
@@ -38,21 +39,27 @@ const getNote = asyncHandler(async (req, res) => {
 // @route POST /notes
 // @access Public
 const createNewNote = asyncHandler(async (req, res) => {
-  const { userId, title, text, completed } = req.body;
+  const { user, title, text, completed } = req.body;
 
-  if (!mongoose.isValidObjectId(userId))
+  if (!mongoose.isValidObjectId(user))
     return badRequest(res, "Invalid user ID");
 
   // Confirm Data
-  if (!userId || !title || !text) {
+  if (!user || !title || !text) {
     return badRequest(res, "All fields are required");
   }
 
-  // Check for duplicate title
-  const duplicate = await NoteService.checkDuplicateNote(title.toLowerCase());
-  if (duplicate) return conflict(res, "Note title already exists");
+  // check if user exists
+  const existingUser = await UserService.findUserById(user);
+  if (!existingUser) return notFound(res, "User not found");
 
-  const noteObject = { user: userId, title, text, completed };
+  // Check for duplicate title for the same user
+  const duplicate = await NoteService.checkDuplicateNoteForUser(user, title);
+  if (duplicate) {
+    return conflict(res, "You already have a note with this title");
+  }
+
+  const noteObject = { user: user, title, text, completed };
 
   // Create and store new note
   const note = await NoteService.createNote(noteObject);
@@ -83,8 +90,11 @@ const updateNote = asyncHandler(async (req, res) => {
   const note = await NoteService.findNoteById(id);
   if (!note) return notFound(res, "Note not found");
 
-  // Check for duplicate
-  const duplicate = await NoteService.checkDuplicateNote(title.toLowerCase());
+  // Check for duplicate user note
+  const duplicate = await NoteService.checkDuplicateNoteForUser(
+    note.user,
+    title,
+  );
   // Allow update to the original note, but prevent changing to another existing notename
   if (duplicate && duplicate?._id.toString() !== id) {
     return conflict(res, "Note already exists");
