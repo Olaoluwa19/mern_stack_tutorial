@@ -1,5 +1,5 @@
 {
-  "name": "Tech Notes",
+  "name": "Ola_oluwa repair store frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,8 +13,10 @@
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
+    "@reduxjs/toolkit": "^2.11.2",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.14.2"
   },
   "devDependencies": {
