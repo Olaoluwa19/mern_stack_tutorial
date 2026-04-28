@@ -17,7 +17,7 @@ const User = ({ userId }) => {
 
     const cellStatus = user.active ? "" : "table__cell--inactive";
 
-    retutn(
+    return (
       <tr className="table__row user">
         <td className={`table__cell ${cellStatus}`}>{user.username}</td>
         <td className={`table__cell ${cellStatus}`}>{userRolesString}</td>
@@ -26,7 +26,7 @@ const User = ({ userId }) => {
             <FontAwesomeIcon icon={faPenToSquare} />
           </button>
         </td>
-      </tr>,
+      </tr>
     );
   } else return null;
 };
