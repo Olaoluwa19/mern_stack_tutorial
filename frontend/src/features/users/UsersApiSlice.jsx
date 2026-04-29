@@ -1,5 +1,5 @@
 import { createSelector, createEntityAdapter } from "@reduxjs/toolkit";
-import { apiSlice } from "../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
 const usersAdapter = createEntityAdapter({});
 
@@ -12,9 +12,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       validateStatus: (response, result) => {
         return response.status === 200 && !result.isError;
       },
-      keepUnusedDatafor: 5,
+      keepUnusedDataFor: 5,
       transformResponse: (responseData) => {
-        const loadedUsers = responseData.map((user) => {
+        // Extract the actual array from the "data" property
+        const usersArray = responseData?.data || [];
+
+        const loadedUsers = usersArray.map((user) => {
           user.id = user._id;
           return user;
         });
