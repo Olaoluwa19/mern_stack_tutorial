@@ -1,7 +1,10 @@
 import { createSelector, createEntityAdapter } from "@reduxjs/toolkit";
-import { apiSlice } from "../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
-const notesAdapter = createEntityAdapter({});
+const notesAdapter = createEntityAdapter({
+  sortComparer: (a, b) =>
+    a.completed === b.completed ? 0 : a.completed ? 1 : -1,
+});
 
 const initialState = notesAdapter.getInitialState();
 
@@ -14,7 +17,9 @@ export const notesApiSlice = apiSlice.injectEndpoints({
       },
       keepUnusedDatafor: 5,
       transformResponse: (responseData) => {
-        const loadedNotes = responseData.map((note) => {
+        const notesArray = responseData?.data || [];
+
+        const loadedNotes = notesArray.map((note) => {
           note.id = note._id;
           return note;
         });
