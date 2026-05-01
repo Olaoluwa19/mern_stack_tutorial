@@ -58,7 +58,37 @@ const NewUserForm = () => {
     }
   };
 
-  return <div>NewUserForm</div>;
+  const options = Object.values(ROLES).map((role) => {
+    return (
+      <option key={role} value={role}>
+        {role}
+      </option>
+    );
+  });
+
+  const errClass = isError ? "errmsg" : "offscreen";
+  const validUserClass = !validUsername ? "form__input--incomplete" : "";
+  const validPwdClass = !validPassword ? "form__input--incomplete" : "";
+  const validRolesClass = !Boolean(roles.length)
+    ? "form__input--incomplete"
+    : "";
+
+  const content = (
+    <>
+      <p className={errClass}>{error?.data?.message}</p>
+
+      <form className="form" onSubmit={onSaveUserClicked}>
+        <div className="form__title-row">
+          <h2>New User</h2>
+          <div className="form__action-buttons">
+            <button className="icon-button" title="Save" disabled={!canSave}>
+              <FontawesomeIcon icon={faSave} />
+            </button>
+          </div>
+    </>
+  )
+
+  return content;
 };
 
 export default NewUserForm;
