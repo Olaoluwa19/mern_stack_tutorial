@@ -85,8 +85,49 @@ const NewUserForm = () => {
               <FontawesomeIcon icon={faSave} />
             </button>
           </div>
+        </div>
+        <label htmlFor="username" className="form__label">
+          Username: <span>[3-20 letters]</span>
+        </label>
+        <input
+          className={`form__input ${validUserClass}`}
+          id="username"
+          name="username"
+          type="text"
+          autoComoplete="off"
+          value={username}
+          onChange={onUsernameChanged}
+        />
+
+        <label className="form__label" htmlFor="password">
+          Password: <span className="nowrap">[4-12 chars incl. !@%#$]</span>
+        </label>
+        <input
+          className={`form__input ${validPwdClass}`}
+          id="password"
+          name="password"
+          type="password"
+          value={password}
+          onChanged={onPasswordChanged}
+        />
+
+        <label className="form__label" htmlFor="roles">
+          ASSSIGNED ROLES:
+        </label>
+        <select
+          id="roles"
+          name="roles"
+          className={`form__select ${validRolesClass}`}
+          multiple={true}
+          size="3"
+          value={roles}
+          onChange={onRolesChanged}
+        >
+          {options}
+        </select>
+      </form>
     </>
-  )
+  );
 
   return content;
 };
