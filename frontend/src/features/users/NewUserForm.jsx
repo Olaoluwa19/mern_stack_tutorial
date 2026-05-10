@@ -29,7 +29,7 @@ const NewUserForm = () => {
   }, [password]);
 
   useEffect(() => {
-    if (isSucess) {
+    if (isSuccess) {
       setUsername("");
       setPassword("");
       setRoles([]);
@@ -94,7 +94,7 @@ const NewUserForm = () => {
           id="username"
           name="username"
           type="text"
-          autoComoplete="off"
+          autoComplete="off"
           value={username}
           onChange={onUsernameChanged}
         />
@@ -108,7 +108,7 @@ const NewUserForm = () => {
           name="password"
           type="password"
           value={password}
-          onChanged={onPasswordChanged}
+          onChange={onPasswordChanged}
         />
 
         <label className="form__label" htmlFor="roles">
