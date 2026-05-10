@@ -12,7 +12,6 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       validateStatus: (response, result) => {
         return response.status === 200 && !result.isError;
       },
-      keepUnusedDataFor: 5,
       transformResponse: (responseData) => {
         // Extract the actual array from the "data" property
         const usersArray = responseData?.data || [];
