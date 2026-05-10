@@ -132,7 +132,10 @@ const EditUserForm = ({ user }) => {
         />
 
         <label className="form__label" htmlFor="password">
-          Password: <span className="nowrap">[empty = no change]</span>
+          Password:{" "}
+          <span className="nowrap">
+            [empty = no change] [4-12 chars incl. !@%#$]
+          </span>
         </label>
         <input
           className={`form__input ${validPwdClass}`}
@@ -152,7 +155,7 @@ const EditUserForm = ({ user }) => {
             className="form__checkbox"
             id="user-active"
             name="user-active"
-            type="checbox"
+            type="checkbox"
             checked={active}
             onChange={onActiveChanged}
           />
