@@ -10,25 +10,20 @@ const NewNoteForm = ({ users }) => {
 
   const navigate = useNavigate();
 
-  const [user, setUser] = useState("");
+  const [userId, setUserId] = useState("");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
 
+  // Set initial user when users are loaded
   useEffect(() => {
-    setUser(user);
-  }, [user]);
-
-  useEffect(() => {
-    setTitle(title);
-  }, [title]);
-
-  useEffect(() => {
-    setText(text);
-  }, [text]);
+    if (users?.length > 0 && !userId) {
+      setUserId(users[0].id);
+    }
+  }, [users, userId]);
 
   useEffect(() => {
     if (isSuccess) {
-      setUser("");
+      setUserId("");
       setTitle("");
       setText("");
       navigate("/dash/notes");
@@ -37,20 +32,27 @@ const NewNoteForm = ({ users }) => {
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onTextChanged = (e) => setText(e.target.value);
-  const onUserChanged = (e) => setUser(e.target.value);
+  const onUserIdChanged = (e) => setUserId(e.target.value);
 
-  const canSave = [user, title, text].every(Boolean) && !isLoading;
+  const canSave =
+    [userId, title, text].every(Boolean) && !isLoading && users?.length > 0;
 
   const onSaveNoteClicked = async (e) => {
     e.preventDefault();
     if (canSave) {
-      await addNewNote({ user, title, text });
+      await addNewNote({ user: userId, title, text });
     }
   };
+
+  const options = users.map((user) => (
+    <option key={user.id} value={user.id}>
+      {user.username}
+    </option>
+  ));
+
   const errClass = isError ? "errmsg" : "offscreen";
-  const userClass = !user ? "form__input--incomplete" : "";
-  const titleClass = !title ? "form__input--incomplete" : "";
-  const textClass = !text ? "form__input--incomplete" : "";
+  const validTitleClass = !title ? "form__input--incomplete" : "";
+  const validTextClass = !text ? "form__input--incomplete" : "";
 
   const content = (
     <>
@@ -68,24 +70,39 @@ const NewNoteForm = ({ users }) => {
           Title:
         </label>
         <input
-          className={`form__input ${titleClass}`}
+          className={`form__input ${validTitleClass}`}
           id="title"
           name="title"
           type="text"
+          autoComplete="off"
           value={title}
           onChange={onTitleChanged}
         />
         <label htmlFor="text" className="form__label">
           Text:
         </label>
-        <input
-          className={`form__input ${textClass}`}
+        <textarea
+          className={`form__input form__input--text ${validTextClass}`}
           id="text"
           name="text"
-          type="text"
           value={text}
           onChange={onTextChanged}
         />
+        <label
+          className="form__label form__checkbox-container"
+          htmlFor="username"
+        >
+          ASSIGNED TO:
+        </label>
+        <select
+          name="username"
+          id="username"
+          className="form__select"
+          value={userId}
+          onChange={onUserIdChanged}
+        >
+          {options}
+        </select>
       </form>
     </>
   );
