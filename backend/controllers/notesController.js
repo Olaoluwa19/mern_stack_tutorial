@@ -75,7 +75,7 @@ const createNewNote = asyncHandler(async (req, res) => {
 // @route PATCH /notes
 // @access Public
 const updateNote = asyncHandler(async (req, res) => {
-  const { id, title, text, completed } = req.body;
+  const { id, title, text, completed, user } = req.body;
 
   // Confirm data
   if (!id || !title || !text || typeof completed !== "boolean") {
@@ -86,6 +86,9 @@ const updateNote = asyncHandler(async (req, res) => {
   }
 
   if (!mongoose.isValidObjectId(id)) return badRequest(res, "Invalid note ID");
+
+  if (!mongoose.isValidObjectId(user))
+    return badRequest(res, "Invalid user ID provided");
 
   const note = await NoteService.findNoteById(id);
   if (!note) return notFound(res, "Note not found");
