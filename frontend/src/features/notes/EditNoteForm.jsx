@@ -18,7 +18,14 @@ const EditNoteForm = ({ note, users }) => {
   const [title, setTitle] = useState(note.title);
   const [text, setText] = useState(note.text);
   const [completed, setCompleted] = useState(note.completed);
-  const [userId, setUserId] = useState(note.user);
+  const [userId, setUserId] = useState(note?.user?._id);
+
+  // Set initial user when users are loaded
+  useEffect(() => {
+    if (users?.length > 0 && !userId) {
+      setUserId(users[0].id);
+    }
+  }, [users, userId]);
 
   useEffect(() => {
     if (isSuccess || isDelSuccess) {
@@ -34,10 +41,14 @@ const EditNoteForm = ({ note, users }) => {
   const onCompletedChanged = () => setCompleted((prev) => !prev);
   const onUserIdChanged = (e) => setUserId(e.target.value);
 
-  const canSave = [title, text, userId].every(Boolean) && !isLoading;
+  const canSave =
+    [title, text, userId].every(Boolean) && !isLoading && users?.length > 0;
 
   const onSaveNoteClicked = async (e) => {
-    await updateNote({ id: note.id, user: userId, title, text, completed });
+    e.preventDefault();
+    if (canSave) {
+      await updateNote({ id: note.id, title, text, completed, user: userId });
+    }
   };
 
   const onDeleteNoteClicked = async () => {
