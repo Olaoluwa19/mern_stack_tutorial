@@ -6,7 +6,10 @@ class NoteService {
   constructor() {}
 
   static async findAllNotes() {
-    return await Note.find().lean();
+    return await Note.find().lean().populate({
+      path: "user",
+      select: "-password -refreshToken -createdAt -updatedAt",
+    });
   }
 
   static async findNoteById(id) {
@@ -50,10 +53,11 @@ class NoteService {
   }
 
   static async updateNote(note, req) {
-    const { title, text, completed } = req.body;
+    const { title, text, completed, user } = req.body;
     note.title = title;
     note.text = text;
     note.completed = completed;
+    note.user = user;
 
     return await note.save();
   }
