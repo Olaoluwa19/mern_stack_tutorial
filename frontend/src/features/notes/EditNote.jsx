@@ -10,14 +10,16 @@ const EditNote = () => {
   const note = useSelector((state) => selectNoteById(state, id));
   const users = useSelector(selectAllUsers);
 
-  const content =
-    note && users ? (
-      <EditNoteForm note={note} users={users} />
-    ) : (
-      <p>Loading...</p>
-    );
+  if (!users || users.length === 0 || !note) {
+    return <p>Loading...</p>;
+  }
 
-  return content;
+  // Note not found
+  if (!note) {
+    return <p>Note not found or you don't have access.</p>;
+  }
+
+  return <EditNoteForm note={note} users={users} />;
 };
 
 export default EditNote;
