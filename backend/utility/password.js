@@ -20,52 +20,40 @@ const comparePassword = async (password, hash) => {
   return await bcrypt.compare(password, hash);
 };
 
-const generateAccessToken = (user, role) => {
-  if (!user || !role)
-    throw new Error("User and role are required to generate access token.");
+const generateAccessToken = (user, roles) => {
+  if (!user.username || !roles)
+    throw new Error("Invalid credentials. Provide a valid username and role.");
 
-  if (!user.email && !user.phone)
-    throw new Error(
-      "User must have either email or phone to generate access token.",
-    );
-
-  const accessToken = jwt.sign(
+  return jwt.sign(
     {
       UserInfo: {
-        user: user.email || user.phone,
-        roles: role,
+        user: user.username,
+        roles: roles,
       },
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" },
+    { expiresIn: "10s" },
   );
-
-  return accessToken;
 };
 
 const generateRefreshToken = (user) => {
-  if (!user) throw new Error("User is required to generate refresh token.");
+  if (!user.username) throw new Error("enter a valid username!");
 
-  if (!user.email && !user.phone)
-    throw new Error(
-      "User must have either email or phone to generate refresh token.",
-    );
-
-  const refreshtoken = jwt.sign(
-    { email: user.email, phone: user.phone },
+  return jwt.sign(
+    { username: user.username },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "1d" },
+    {
+      expiresIn: "1d",
+    },
   );
-
-  return refreshtoken;
 };
 
 const setRefreshTokenCookie = (res, refreshToken) => {
   return res.cookie("jwt", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "None",
-    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true, // accessible only by web server
+    secure: process.env.NODE_ENV === "production", // https
+    sameSite: "None", // cross-site coookies
+    maxAge: 24 * 60 * 60 * 1000, // cookie expiry: set to match refreshToken
   });
 };
 
