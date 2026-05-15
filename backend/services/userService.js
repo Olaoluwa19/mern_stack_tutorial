@@ -36,10 +36,8 @@ class UserService {
     return await User.findOne({ username }).lean().exec();
   }
 
-  static async findUserByEmailOrPhone(identifier) {
-    return await User.findOne({
-      $or: [{ phone: identifier }, { email: identifier }],
-    }).exec();
+  static async findUser(username) {
+    return await User.findOne({ username }).exec();
   }
 
   static async deleteUser(id) {
