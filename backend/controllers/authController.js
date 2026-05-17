@@ -1,16 +1,17 @@
 import expressAsyncHandler from "express-async-handler";
-import UserService from "../services/userService";
+import jwt from "jsonwebtoken";
+import UserService from "../services/userService.js";
 import {
   badRequest,
   created,
   forbidden,
   unauthorized,
-} from "../utility/response";
+} from "../utility/response.js";
 import {
   generateAccessToken,
   generateRefreshToken,
   setRefreshTokenCookie,
-} from "../utility/password";
+} from "../utility/password.js";
 
 // @desc Login
 // @route POST /auth
@@ -42,23 +43,10 @@ const login = expressAsyncHandler(async (req, res) => {
     const accessToken = generateAccessToken(foundUser, roles);
     const refreshToken = generateRefreshToken(foundUser);
 
-    // Saving refreshToken with current user
-    foundUser.refreshToken = refreshToken;
-    const user = await foundUser.save();
-    const populatedUser = await UserService.populateUser(user._id);
-    console.log(populatedUser);
-
     // set cookie with refresh token
     setRefreshTokenCookie(res, refreshToken);
 
-    return created(
-      res,
-      {
-        accessToken,
-        user: populatedUser,
-      },
-      "Login successful☺️🔓",
-    );
+    return created(res, accessToken, "Login successful☺️🔓");
   } else {
     return unauthorized(res, "Login failed😔! Invalid credentials🗝️.");
   }
@@ -67,11 +55,50 @@ const login = expressAsyncHandler(async (req, res) => {
 // @desc Refresh
 // @route GET /auth/refresh
 // @access Public - because access token has expired
-const refresh = (req, res) => {};
+const refresh = (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt)
+    return unauthorized(res, "You don't have a valid jwt cookies."); // unauthorized
+  const refreshToken = cookies.jwt;
+
+  //Evaluate jwt
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    expressAsyncHandler(async (err, decoded) => {
+      if (err) {
+        return forbidden(res, "JWT verification error:", err); //forbidden
+      }
+
+      // is refreshToken in db
+      const foundUser = await User.findOne({
+        username: decoded.username,
+      }).exec();
+      if (!foundUser) {
+        return unauthorized(res, "User does not exist in DB."); //forbidden
+      }
+
+      const roles = Object.values(foundUser.roles);
+      const accessToken = generateAccessToken(decoded, roles);
+
+      return ok(res, { accessToken }, "Access token refreshed successfully.");
+    }),
+  );
+};
 
 // @desc Logout
 // @route POST /auth/logout
 // @ccess Public - just to clear cookie if exists
-const logout = (req, res) => {};
+const logout = (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return noContent(res, "No JWT cookies found."); // No content
+
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "None",
+    secure: process.env.NODE_ENV === "production", // https
+  }); // secure: true - only serves on http
+  return ok(res, "Successfully cleared cookie. Logout successfully.");
+};
 
 export { login, refresh, logout };
