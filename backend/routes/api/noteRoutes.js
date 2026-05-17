@@ -1,6 +1,5 @@
 import express from "express";
 const noteRouter = express.Router();
-
 import {
   getAllNotes,
   getNote,
@@ -8,6 +7,9 @@ import {
   updateNote,
   deleteNote,
 } from "../../controllers/notesController.js";
+import verifyJWT from "../../middleware/verifyJWT.js";
+
+noteRouter.use(verifyJWT);
 
 noteRouter
   .route("/")

@@ -1,6 +1,5 @@
 import express from "express";
 const userRouter = express.Router();
-
 import {
   getAllUsers,
   getUser,
@@ -8,6 +7,9 @@ import {
   updateUser,
   deleteUser,
 } from "../../controllers/usersController.js";
+import verifyJWT from "../../middleware/verifyJWT.js";
+
+userRouter.use(verifyJWT);
 
 userRouter
   .route("/")
