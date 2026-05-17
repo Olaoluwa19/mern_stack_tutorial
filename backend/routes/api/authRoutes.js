@@ -1,7 +1,7 @@
 import express from "express";
 const authRouter = express.Router();
-import { login, refresh, logout } from "../../controllers/authController";
-import loginLimiter from "../../middleware/loginLimiter";
+import { login, refresh, logout } from "../../controllers/authController.js";
+import loginLimiter from "../../middleware/loginLimiter.js";
 
 authRouter.route("/").post(loginLimiter, login);
 
