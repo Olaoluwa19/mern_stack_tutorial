@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import http from "http";
 import app from "./app.js";
 import connectDB from "./config/mongodb.js";
-import { logEvents } from "./middleware/logEvents.js";
+import { logEvents } from "./middleware/logger.js";
 
 const PORT = process.env.PORT || 3500;
 

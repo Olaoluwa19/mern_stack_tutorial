@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import credentials from "./middleware/credentials.js";
 import corsOptions from "./config/corsOptions.js";
 import errorHandler from "./middleware/errorHandler.js";
-import { logger } from "./middleware/logEvents.js";
+import { logger } from "./middleware/logger.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
