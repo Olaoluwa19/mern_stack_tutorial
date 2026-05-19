@@ -20,6 +20,7 @@ const startServer = async () => {
     // connect to mongoDB
     connectDB();
     mongoose.connection.once("open", () => {
+      console.log(process.env.NODE_ENV);
       console.log("Connected to MongoDB ☑️");
       server.listen(PORT, () => {
         console.log(`Server running on port ${PORT} 🚀🚀`);
