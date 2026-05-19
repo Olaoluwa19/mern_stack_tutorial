@@ -5,9 +5,11 @@ import {
   badRequest,
   created,
   forbidden,
+  ok,
   unauthorized,
 } from "../utility/response.js";
 import {
+  comparePassword,
   generateAccessToken,
   generateRefreshToken,
   setRefreshTokenCookie,
@@ -20,9 +22,8 @@ const login = expressAsyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   // require email or phone for login
-  if (!username) return badRequest(res, "Username is required to login.");
-
-  if (!password) return badRequest(res, "Password is required to login.");
+  if (!username || !password)
+    return badRequest(res, "All fields are required.");
 
   //   Check if user exists
   const foundUser = await UserService.findUser(username);
@@ -57,8 +58,7 @@ const login = expressAsyncHandler(async (req, res) => {
 // @access Public - because access token has expired
 const refresh = (req, res) => {
   const cookies = req.cookies;
-  if (!cookies?.jwt)
-    return unauthorized(res, "You don't have a valid jwt cookies."); // unauthorized
+  if (!cookies?.jwt) return unauthorized(res); // unauthorized
   const refreshToken = cookies.jwt;
 
   //Evaluate jwt
@@ -71,9 +71,7 @@ const refresh = (req, res) => {
       }
 
       // is refreshToken in db
-      const foundUser = await User.findOne({
-        username: decoded.username,
-      }).exec();
+      const foundUser = await UserService.findUser(decoded.username);
       if (!foundUser) {
         return unauthorized(res, "User does not exist in DB."); //forbidden
       }
