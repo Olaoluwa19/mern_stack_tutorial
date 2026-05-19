@@ -32,7 +32,7 @@ const generateAccessToken = (user, roles) => {
       },
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "10s" },
+    { expiresIn: "30s" },
   );
 };
 
@@ -43,7 +43,7 @@ const generateRefreshToken = (user) => {
     { username: user.username },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "7d",
     },
   );
 };
@@ -53,7 +53,7 @@ const setRefreshTokenCookie = (res, refreshToken) => {
     httpOnly: true, // accessible only by web server
     secure: process.env.NODE_ENV === "production", // https
     sameSite: "None", // cross-site coookies
-    maxAge: 24 * 60 * 60 * 1000, // cookie expiry: set to match refreshToken
+    maxAge: 7 * 24 * 60 * 60 * 1000, // cookie expiry: set to match refreshToken
   });
 };
 
