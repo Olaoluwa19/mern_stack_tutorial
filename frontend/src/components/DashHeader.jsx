@@ -32,13 +32,29 @@ const DashHeader = () => {
   ) {
     dashClass = "dash-header__container--small";
   }
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    sendLogout();
+    navigate("/");
+  };
+
+  const logoutButton = (
+    <button className="icon-button" title="Logout" onClick={handleLogout}>
+      <FontAwesomeIcon icon={faRightFromBracket} />
+    </button>
+  );
+
   const content = (
     <header className="dash-header">
-      <div className="dash-header__container">
+      <div className={`dash-header__container ${dashClass}`}>
         <Link to="/dash">
           <h1 className="dash-header__title">techNotes</h1>
         </Link>
-        <nav>{/* add nav buttons later */}</nav>
+        <nav>
+          {/* add more buttons later */}
+          {logoutButton}
+        </nav>
       </div>
     </header>
   );
