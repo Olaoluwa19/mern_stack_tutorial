@@ -22,7 +22,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
           //console.log(data)
           dispatch(logOut());
           dispatch(apiSlice.util.resetApiState());
-        } catch (e) {
+        } catch (err) {
           console.log(err);
         }
       },
