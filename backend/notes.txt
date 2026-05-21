@@ -4,3 +4,5 @@ fetch("http://localhost:3500/")
 In Terminal:
 - node
 - require("crypto").randomBytes(64).toString("hex")
+
+git reset --soft HEAD~1
