@@ -48,7 +48,7 @@ const Login = () => {
   };
 
   const handleUserInput = (e) => setUsername(e.target.value);
-  const hanlePwdInput = (e) => setPassword(e.target.value);
+  const handlePwdInput = (e) => setPassword(e.target.value);
 
   const errClass = errMsg ? "errmsg" : "offscreen";
 
@@ -84,7 +84,9 @@ const Login = () => {
             value={password}
             required
           />
-          <button className="form__submit-button">Sign In</button>
+          <button className="form__submit-button" type="submit">
+            Sign In
+          </button>
         </form>
       </main>
       <footer>
