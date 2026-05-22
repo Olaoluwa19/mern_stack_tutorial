@@ -28,8 +28,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { accessToken } = await login({ username, password }).unwrap();
+      const response = await login({ username, password }).unwrap();
+      const accessToken = response.data;
+
       dispatch(setCredentials({ accessToken }));
+
       setUsername("");
       setPassword("");
       navigate("/dash");
