@@ -1,14 +1,19 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Outlet } from "react-router-dom";
+
 import { store } from "../../app/store";
 import { notesApiSlice } from "../notes/notesApiSlice";
 import { usersApiSlice } from "../users/usersApiSlice";
-import { useEffect } from "react";
-import { Outlet } from "react-router-dom";
-
-import React from "react";
+import { selectCurrentToken } from "./authSlice";
 
 const Prefetch = () => {
+  const token = useSelector(selectCurrentToken);
+
   useEffect(() => {
-    console.log("subscribing");
+    if (!token) return; // ← Important: Don't run without token
+
+    console.log("✅ Token found → Subscribing to notes & users");
     const notes = store.dispatch(notesApiSlice.endpoints.getNotes.initiate());
     const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate());
 
@@ -17,7 +22,7 @@ const Prefetch = () => {
       notes.unsubscribe();
       users.unsubscribe();
     };
-  }, []);
+  }, [token]);
 
   return <Outlet />;
 };
