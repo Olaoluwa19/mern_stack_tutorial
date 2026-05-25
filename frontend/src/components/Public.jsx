@@ -5,16 +5,16 @@ const Public = () => {
     <section className="public">
       <header>
         <h1>
-          Welcome to <span className="nowrap">Ola_oluwa repair shop</span>
+          Welcome to <span className="nowrap">ola_oluwa repair shop</span>
         </h1>
       </header>
       <main className="public__main">
         <p>
-          Located in the heart of Ikeja, Computer village, Ola_oluwa repair
-          procides a trained staff ready to meet your tech repair needs.
+          Located in the heart of Ikeja, Computer village, ola_oluwa repair
+          provides a trained staff ready to meet your tech repair needs.
         </p>
         <address className="public__addr">
-          Ola_oluwa Repairs
+          ola_oluwa Repairs
           <br />
           7 otigba street, Computer Village
           <br />
