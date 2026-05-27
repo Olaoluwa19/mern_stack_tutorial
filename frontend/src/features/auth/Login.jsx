@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
-import { Eye, EyeOff } from "lucide-react"; // or use heroicons / your own icons
+import usePersist from "../../hooks/usePersist";
 
 const Login = () => {
   const userRef = useRef();
@@ -13,6 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [persist, setPersist] = usePersist();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -56,6 +57,10 @@ const Login = () => {
     }
   };
 
+  const handleUserInput = (e) => setUsername(e.target.value);
+  const handlePwdInput = (e) => setPassword(e.target.value);
+  const handleTogglePersist = () => setPersist((prev) => !prev);
+
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -82,7 +87,7 @@ const Login = () => {
             id="username"
             ref={userRef}
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleUserInput}
             autoComplete="off"
             required
           />
@@ -94,7 +99,7 @@ const Login = () => {
               type={showPassword ? "text" : "password"}
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePwdInput}
               required
             />
             <button
@@ -102,7 +107,7 @@ const Login = () => {
               className="password-toggle-btn"
               onClick={togglePasswordVisibility}
             >
-              {showPassword ? "🙈" : "👁️"} {/* or use SVG */}
+              {showPassword ? "🙈" : "👁️"}
             </button>
           </div>
 
@@ -113,6 +118,16 @@ const Login = () => {
           >
             Sign In
           </button>
+          <label htmlFor="persist" className="persist">
+            <input
+              type="checkbox"
+              className="form__checkbox"
+              id="persist"
+              onChange={handleTogglePersist}
+              checked={persist}
+            />
+            Trust this device?
+          </label>
         </form>
       </main>
       <footer>
