@@ -6,7 +6,7 @@ class UserService {
   constructor() {}
 
   static async validateRole(roles) {
-    return [6743, 9087, 1473].includes(roles);
+    return ["Employee", "Manager", "Admin"].includes(roles);
   }
 
   static async findAllUsers() {
