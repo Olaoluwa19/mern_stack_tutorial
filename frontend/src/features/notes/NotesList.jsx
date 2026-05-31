@@ -31,11 +31,9 @@ const NotesList = () => {
       filteredIds = [...ids];
     } else {
       filteredIds = ids.filter(
-        (noteId) => entities[noteId].username === username,
+        (noteId) => entities[noteId]?.user?.username === username,
       );
-      console.log("filteredIds: ", filteredIds);
     }
-    console.log(filteredIds);
 
     const tableContent =
       ids?.length &&
