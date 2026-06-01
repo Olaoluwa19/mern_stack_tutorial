@@ -41,7 +41,7 @@ const createNewUser = asyncHandler(async (req, res) => {
   const { username, password, roles } = req.body;
 
   // Confirm Data
-  if (!username || !password || !Array.isArray(roles) || !roles.length) {
+  if (!username || !password) {
     return badRequest(res, "All fields are required");
   }
   // Validate role
@@ -63,13 +63,17 @@ const createNewUser = asyncHandler(async (req, res) => {
 
   // Hash password
   const hashedPwd = await hashPassword(password);
-  const userObject = { username, password: hashedPwd, roles };
+
+  const userObject =
+    !Array.isArray(roles) || !roles.length
+      ? { username, password: hashedPwd }
+      : { username, password: hashedPwd, roles };
 
   // Create and store new user
   const user = await UserService.createUser(userObject);
 
   if (user) {
-    return created(res, user, `New user ${user.username} created`);
+    return created(res, user, `New user "${user.username}" created`);
   } else {
     return badRequest(res, "Invalid user data received");
   }
