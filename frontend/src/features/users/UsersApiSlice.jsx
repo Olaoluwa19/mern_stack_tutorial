@@ -9,9 +9,6 @@ export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => "/users",
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
-      },
       transformResponse: (responseData) => {
         // Extract the actual array from the "data" property
         const usersArray = responseData?.data || [];
