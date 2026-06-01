@@ -33,7 +33,10 @@ class UserService {
   }
 
   static async checkDuplicateUser(username) {
-    return await User.findOne({ username }).lean().exec();
+    return await User.findOne({ username })
+      .collation({ locale: "en", strength: 2 })
+      .lean()
+      .exec();
   }
 
   static async findUser(username) {
