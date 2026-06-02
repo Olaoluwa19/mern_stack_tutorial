@@ -80,11 +80,14 @@ const Login = () => {
         </p>
 
         <form className="form" onSubmit={handleSubmit}>
-          <label htmlFor="username">Username:</label>
+          <label className="form__label" htmlFor="username">
+            Username:
+          </label>
           <input
             type="text"
             className="form__input"
             id="username"
+            name="username"
             ref={userRef}
             value={username}
             onChange={handleUserInput}
@@ -92,14 +95,18 @@ const Login = () => {
             required
           />
 
-          <label htmlFor="password">Password:</label>
+          <label className="form__label" htmlFor="password">
+            Password:
+          </label>
           <div className="password-container">
             <input
               className="form__input password-input"
-              type={showPassword ? "text" : "password"}
               id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={handlePwdInput}
+              autoComplete="off"
               required
             />
             <button
