@@ -24,6 +24,7 @@ const EditUserForm = ({ user }) => {
   const [validPassword, setValidPassword] = useState(false);
   const [roles, setRoles] = useState(user.roles);
   const [active, setActive] = useState(user.active);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setValidUsername(USER_REGEX.test(username));
@@ -44,6 +45,10 @@ const EditUserForm = ({ user }) => {
 
   const onUsernameChanged = (e) => setUsername(e.target.value);
   const onPasswordChanged = (e) => setPassword(e.target.value);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const onRolesChanged = (e) => {
     const values = Array.from(
@@ -137,14 +142,24 @@ const EditUserForm = ({ user }) => {
             [empty = no change] [4-12 chars incl. !@%#$]
           </span>
         </label>
-        <input
-          className={`form__input ${validPwdClass}`}
-          id="password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={onPasswordChanged}
-        />
+        <div className="password-container">
+          <input
+            className={`form__input password-input ${validPwdClass}`}
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={onPasswordChanged}
+            autoComplete="off"
+          />
+          <button
+            type="button"
+            className="password-toggle-btn"
+            onClick={togglePasswordVisibility}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </div>
 
         <label
           className="form__label form__checkbox-container"
