@@ -1,25 +1,40 @@
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectNoteById } from "./notesApiSlice";
-import { selectAllUsers } from "../users/UsersApiSlice";
 import EditNoteForm from "./EditNoteForm";
+import { useGetNotesQuery } from "./notesApiSlice";
+import { useGetUsersQuery } from "../users/usersApiSlice";
+import useAuth from "../../hooks/useAuth";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const EditNote = () => {
   const { id } = useParams();
 
-  const note = useSelector((state) => selectNoteById(state, id));
-  const users = useSelector(selectAllUsers);
+  const { username, isManager, isAdmin } = useAuth();
+
+  const { note } = useGetNotesQuery("notesList", {
+    selectFromResult: ({ data }) => ({
+      note: data?.entities[id],
+    }),
+  });
+
+  const { users } = useGetUsersQuery("usersList", {
+    selectFromResult: ({ data }) => ({
+      users: data?.ids.map((id) => data?.entities[id]),
+    }),
+  });
 
   if (!users || users.length === 0 || !note) {
-    return <p>Loading...</p>;
+    return <PulseLoader color={"#FFF"} />;
   }
 
-  // Note not found
-  if (!note) {
-    return <p>Note not found or you don't have access.</p>;
+  if (!isManager && isAdmin) {
+    if (note.username !== username) {
+      return <p className="errmsg">No access</p>;
+    }
   }
 
-  return <EditNoteForm note={note} users={users} />;
+  const content = <EditNoteForm note={note} users={users} />;
+
+  return content;
 };
 
 export default EditNote;
