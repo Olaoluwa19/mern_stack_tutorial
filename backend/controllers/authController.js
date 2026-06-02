@@ -36,37 +36,36 @@ const login = expressAsyncHandler(async (req, res) => {
     return forbidden(res, "User is not allowed on the platform😡!"); // forbidden
 
   // Evaluate password
-  const match = comparePassword(password, foundUser.password);
+  const match = await comparePassword(password, foundUser.password);
 
-  if (match) {
-    const roles = Object.values(foundUser.roles);
+  if (!match)
+    return unauthorized(res, "Login failed😔! Invalid credentials🗝️."); // unauthorised
 
-    //create JWT's
-    const accessToken = generateAccessToken(foundUser, roles);
-    const refreshToken = generateRefreshToken(foundUser);
+  const roles = Object.values(foundUser.roles);
 
-    // set cookie with refresh token
-    setRefreshTokenCookie(res, refreshToken);
+  //create JWT's
+  const accessToken = generateAccessToken(foundUser, roles);
+  const refreshToken = generateRefreshToken(foundUser);
 
-    return created(res, accessToken, "Login successful☺️🔓");
-  } else {
-    return unauthorized(res, "Login failed😔! Invalid credentials🗝️.");
-  }
+  // set cookie with refresh token
+  setRefreshTokenCookie(res, refreshToken);
+
+  return ok(res, accessToken, "Login successful☺️🔓");
 });
 
 // @desc Refresh
 // @route GET /auth/refresh
 // @access Public - because access token has expired
-const refresh = (req, res) => {
+const refresh = expressAsyncHandler(async (req, res) => {
   const cookies = req.cookies;
-  if (!cookies?.jwt) return unauthorized(res); // unauthorized
+  if (!cookies?.jwt) return unauthorized(res, "No refresh Token found."); // unauthorized
   const refreshToken = cookies.jwt;
 
   //Evaluate jwt
   jwt.verify(
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
-    expressAsyncHandler(async (err, decoded) => {
+    async (err, decoded) => {
       if (err) {
         return forbidden(res, "JWT verification error:", err); //forbidden
       }
@@ -74,16 +73,21 @@ const refresh = (req, res) => {
       // is refreshToken in db
       const foundUser = await UserService.findUser(decoded.username);
       if (!foundUser) {
-        return unauthorized(res, "User does not exist in DB."); //forbidden
+        return unauthorized(res, "User not found."); // unauthorized
+      }
+
+      // Check if user is active
+      if (!foundUser.active) {
+        return forbidden(res, "User account is inactive");
       }
 
       const roles = Object.values(foundUser.roles);
-      const accessToken = generateAccessToken(decoded, roles);
+      const accessToken = generateAccessToken(foundUser, roles);
 
       return ok(res, { accessToken }, "Access token refreshed successfully.");
-    }),
+    },
   );
-};
+});
 
 // @desc Logout
 // @route POST /auth/logout
