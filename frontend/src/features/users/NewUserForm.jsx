@@ -17,6 +17,7 @@ const NewUserForm = () => {
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
   const [roles, setRoles] = useState(["Employee"]);
 
@@ -46,6 +47,10 @@ const NewUserForm = () => {
       (option) => option.value,
     );
     setRoles(values);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   const canSave =
@@ -94,22 +99,34 @@ const NewUserForm = () => {
           id="username"
           name="username"
           type="text"
-          autoComplete="off"
           value={username}
           onChange={onUsernameChanged}
+          autoComplete="off"
+          required
         />
 
         <label className="form__label" htmlFor="password">
           Password: <span className="nowrap">[4-12 chars incl. !@%#$]</span>
         </label>
-        <input
-          className={`form__input ${validPwdClass}`}
-          id="password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={onPasswordChanged}
-        />
+        <div className="password-container">
+          <input
+            className={`form__input password-input ${validPwdClass}`}
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={onPasswordChanged}
+            autoComplete="off"
+            required
+          />
+          <button
+            type="button"
+            className="password-toggle-btn"
+            onClick={togglePasswordVisibility}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </div>
 
         <label className="form__label" htmlFor="roles">
           ASSSIGNED ROLES:
